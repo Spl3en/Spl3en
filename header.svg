@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500">
+  <defs>
+    <!-- Background Dot Grid Pattern -->
+    <pattern id="dotGrid" width="25" height="25" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#565f89" opacity="0.2" />
+    </pattern>
+
+    <!-- Subtle Glow Filter for Nodes -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <style>
+    .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .hud { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; letter-spacing: 2px; }
+    
+    /* Blinking Cursor Animation */
+    @keyframes blink { 
+      0%, 100% { opacity: 1; } 
+      50% { opacity: 0; } 
+    }
+    .cursor { animation: blink 1s step-end infinite; }
+    
+    /* Subtle pulsing for the center node */
+    @keyframes pulse {
+      0%, 100% { r: 6px; opacity: 1; }
+      50% { r: 8px; opacity: 0.8; }
+    }
+    .center-node { animation: pulse 3s infinite ease-in-out; }
+  </style>
+
+  <!-- Absolute Background -->
+  <rect width="100%" height="100%" fill="#15161e" />
+  
+  <!-- Grid Layer -->
+  <rect width="100%" height="100%" fill="url(#dotGrid)" />
+
+  <!-- ========================================== -->
+  <!-- HUD CORNER ACCENTS (Cyberpunk/Tech framing)-->
+  <!-- ========================================== -->
+  <path d="M 15 40 L 15 15 L 40 15" fill="none" stroke="#7dcfff" stroke-width="2" opacity="0.6" />
+  <path d="M 885 40 L 885 15 L 860 15" fill="none" stroke="#7dcfff" stroke-width="2" opacity="0.6" />
+  <path d="M 15 460 L 15 485 L 40 485" fill="none" stroke="#7dcfff" stroke-width="2" opacity="0.6" />
+  <path d="M 885 460 L 885 485 L 860 485" fill="none" stroke="#7dcfff" stroke-width="2" opacity="0.6" />
+
+  <text x="40" y="40" class="hud" font-size="10" fill="#565f89" font-weight="bold">TERMINAL_INSTANCE_01</text>
+  <text x="880" y="30" class="hud" font-size="10" fill="#565f89" text-anchor="end" font-weight="bold">SYS_ID: 0x8F9A</text>
+  <text x="880" y="475" class="hud" font-size="10" fill="#565f89" text-anchor="end" font-weight="bold">v. 2.0.4 // SECURE CONNECTION</text>
+
+
+  <!-- ========================================== -->
+  <!-- RIGHT SIDE: NETWORK GRAPH & RADAR          -->
+  <!-- ========================================== -->
+  <g id="network-visualization">
+    <!-- Animated Outer Rings -->
+    <circle cx="710" cy="260" r="150" fill="none" stroke="#7dcfff" stroke-width="1" stroke-dasharray="2 8 20 8 5 15" opacity="0.3">
+      <animateTransform attributeName="transform" type="rotate" from="0 710 260" to="360 710 260" dur="20s" repeatCount="indefinite"/>
+    </circle>
+    
+    <circle cx="710" cy="260" r="110" fill="none" stroke="#f7768e" stroke-width="1" stroke-dasharray="20 40 10 10" opacity="0.3">
+      <animateTransform attributeName="transform" type="rotate" from="360 710 260" to="0 710 260" dur="30s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Static Inner Grid Circles -->
+    <circle cx="710" cy="260" r="140" fill="none" stroke="#24283b" stroke-width="2" />
+    <circle cx="710" cy="260" r="60" fill="none" stroke="#565f89" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+
+    <!-- Radar Sweep Line -->
+    <line x1="710" y1="260" x2="710" y2="110" stroke="#7dcfff" stroke-width="2" opacity="0.4">
+      <animateTransform attributeName="transform" type="rotate" from="0 710 260" to="360 710 260" dur="6s" repeatCount="indefinite"/>
+    </line>
+
+    <!-- Network Connections (Lines) -->
+    <path d="M710,260 L630,180 L790,160 L710,260 L830,280 L750,380 L710,260 L610,340 L570,240 L710,260" fill="rgba(125, 207, 255, 0.03)" stroke="#565f89" stroke-width="1.5" opacity="0.6"/>
+    <path d="M630,180 L570,240 M790,160 L830,280 L750,380 M610,340 L630,180" fill="none" stroke="#565f89" stroke-width="1" opacity="0.4"/>
+
+    <!-- Animated Data Packets Flowing Along Lines -->
+    <circle r="2.5" fill="#e0af68" filter="url(#glow)">
+      <animateMotion dur="3s" repeatCount="indefinite" path="M630,180 L710,260" />
+    </circle>
+    <circle r="2.5" fill="#7dcfff" filter="url(#glow)">
+      <animateMotion dur="4s" repeatCount="indefinite" path="M790,160 L830,280" />
+    </circle>
+    <circle r="2.5" fill="#f7768e" filter="url(#glow)">
+      <animateMotion dur="2.5s" repeatCount="indefinite" path="M570,240 L710,260" />
+    </circle>
+    <circle r="2.5" fill="#9ece6a" filter="url(#glow)">
+      <animateMotion dur="3.5s" repeatCount="indefinite" path="M710,260 L750,380" />
+    </circle>
+
+    <!-- Network Nodes (Circles) -->
+    <circle cx="630" cy="180" r="4.5" fill="#7dcfff" filter="url(#glow)"/>
+    <circle cx="790" cy="160" r="4.5" fill="#f7768e" filter="url(#glow)"/>
+    <circle cx="830" cy="280" r="4.5" fill="#7dcfff" filter="url(#glow)"/>
+    <circle cx="750" cy="380" r="4.5" fill="#9ece6a" filter="url(#glow)"/>
+    <circle cx="610" cy="340" r="4.5" fill="#f7768e" filter="url(#glow)"/>
+    <circle cx="570" cy="240" r="4.5" fill="#7dcfff" filter="url(#glow)"/>
+    
+    <!-- Central Node -->
+    <circle cx="710" cy="260" r="6" fill="#e0af68" class="center-node" filter="url(#glow)"/>
+  </g>
+
+
+  <!-- ========================================== -->
+  <!-- LEFT SIDE: TERMINAL WINDOW                 -->
+  <!-- ========================================== -->
+  <g id="terminal">
+    <!-- Terminal Background & Border -->
+    <rect x="40" y="60" width="520" height="400" rx="10" fill="#1a1b26" stroke="#24283b" stroke-width="2"/>
+    
+    <!-- Terminal Top Bar -->
+    <path d="M 40 100 L 560 100" fill="none" stroke="#24283b" stroke-width="2" />
+    <circle cx="65" cy="80" r="6" fill="#f7768e" />
+    <circle cx="85" cy="80" r="6" fill="#e0af68" />
+    <circle cx="105" cy="80" r="6" fill="#9ece6a" />
+    <text x="300" y="85" class="hud" font-size="11" fill="#565f89" text-anchor="middle">~/system/profile.sh</text>
+
+    <!-- Terminal Content (Text Block) -->
+    <text x="60" y="140" class="code" font-size="15">
+        <tspan fill="#f7768e">root@system</tspan>
+        <tspan fill="#a9b1d6">:~# </tspan>
+        <tspan fill="#a9b1d6">./initialize.sh</tspan>
+    </text>
+
+    <text x="60" y="170" class="code" font-size="15" fill="#565f89">[+] Loading kernel modules......... <tspan fill="#9ece6a">OK</tspan>
+    </text>
+    <text x="60" y="195" class="code" font-size="15" fill="#565f89">
+        [+] Bootstrapping neural net....... <tspan fill="#9ece6a">OK</tspan>
+    </text>
+
+    <text x="60" y="235" class="code" font-size="15">
+        <tspan fill="#f7768e">root@system</tspan>
+        <tspan fill="#a9b1d6">:~# </tspan>
+        <tspan fill="#a9b1d6">cat profile.json</tspan>
+    </text>
+
+    <!-- Syntax Highlighted JSON Code -->
+    <text x="60" y="265" class="code" font-size="15" fill="#a9b1d6">{</text>
+
+    <text x="80" y="295" class="code" font-size="15">
+        <tspan fill="#7dcfff">"user"</tspan>
+        <tspan fill="#a9b1d6">: </tspan>
+        <tspan fill="#9ece6a">"Full Stack Developer &amp; Hacker"</tspan>
+        <tspan fill="#a9b1d6">,</tspan>
+    </text>
+
+    <text x="80" y="325" class="code" font-size="15">
+        <tspan fill="#7dcfff">"skills"</tspan>
+        <tspan fill="#a9b1d6">:[</tspan>
+        <tspan fill="#9ece6a">"Rust"</tspan>
+        <tspan fill="#a9b1d6">, </tspan>
+        <tspan fill="#9ece6a">"Python"</tspan>
+        <tspan fill="#a9b1d6">, </tspan>
+        <tspan fill="#9ece6a">"TypeScript"</tspan>
+        <tspan fill="#a9b1d6">, </tspan>
+        <tspan fill="#9ece6a">"Security"</tspan>
+        <tspan fill="#a9b1d6">],</tspan>
+    </text>
+
+    <text x="80" y="355" class="code" font-size="15">
+        <tspan fill="#7dcfff">"status"</tspan>
+        <tspan fill="#a9b1d6">: </tspan>
+        <tspan fill="#9ece6a">"Compiling code and securing systems..."</tspan>
+        <tspan fill="#a9b1d6">,</tspan>
+    </text>
+
+    <text x="80" y="385" class="code" font-size="15">
+        <tspan fill="#7dcfff">"caffeine_level"</tspan>
+        <tspan fill="#a9b1d6">: </tspan>
+        <tspan fill="#e0af68">"99.9%"</tspan>
+    </text>
+
+    <text x="60" y="415" class="code" font-size="15" fill="#a9b1d6">}</text>
+
+    <!-- Active Prompt with Blinking Cursor -->
+    <text x="60" y="450" class="code" font-size="15">
+        <tspan fill="#f7768e">root@system</tspan>
+        <tspan fill="#a9b1d6">:~# </tspan>
+        <tspan fill="#a9b1d6" class="cursor">_</tspan>
+    </text>
+  </g>
+</svg>
