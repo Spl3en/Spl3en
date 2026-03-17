@@ -153,20 +153,20 @@
     <text x="80" y="325" class="code" font-size="15">
         <tspan fill="#7dcfff">"skills"</tspan>
         <tspan fill="#a9b1d6">:[</tspan>
-        <tspan fill="#9ece6a">"Rust"</tspan>
+        <tspan fill="#9ece6a">"C/C++"</tspan>
         <tspan fill="#a9b1d6">, </tspan>
         <tspan fill="#9ece6a">"Python"</tspan>
         <tspan fill="#a9b1d6">, </tspan>
-        <tspan fill="#9ece6a">"TypeScript"</tspan>
+        <tspan fill="#9ece6a">"x86"</tspan>
         <tspan fill="#a9b1d6">, </tspan>
-        <tspan fill="#9ece6a">"Security"</tspan>
+        <tspan fill="#9ece6a">"IDA Pro"</tspan>
         <tspan fill="#a9b1d6">],</tspan>
     </text>
 
     <text x="80" y="355" class="code" font-size="15">
         <tspan fill="#7dcfff">"status"</tspan>
         <tspan fill="#a9b1d6">: </tspan>
-        <tspan fill="#9ece6a">"Compiling code and securing systems..."</tspan>
+        <tspan fill="#9ece6a">"Decompiling and recompiling code..."</tspan>
         <tspan fill="#a9b1d6">,</tspan>
     </text>
 
