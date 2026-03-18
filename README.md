@@ -1,1 +1,1 @@
-<img src="header.svg" width="100%" alt="Header">
+<img src="header2.svg" width="100%" alt="Header">
