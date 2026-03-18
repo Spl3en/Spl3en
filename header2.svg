@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-400 -400 800 800" width="100%" height="100%" style="background-color: #030305; overflow: hidden;">
+  <defs>
+    <!-- Background glow for atmospheric depth -->
+    <radialGradient id="bg-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#11111a" />
+      <stop offset="100%" stop-color="#000000" />
+    </radialGradient>
+  </defs>
+
+  <rect x="-400" y="-400" width="800" height="800" fill="url(#bg-glow)" />
+
+  <!-- A single group to hold our dynamically generated color paths -->
+  <g id="scene"></g>
+
+  <text id="loading" x="0" y="0" fill="#fff" text-anchor="middle" font-family="sans-serif" font-size="14">
+    Initializing 120 FPS Engine...
+  </text>
+
+  <script>
+    <![CDATA[
+      document.addEventListener('DOMContentLoaded', () => {
+        const scene = document.getElementById('scene');
+        document.getElementById('loading').remove();
+
+        const numPoints = 6000; // Increased point density since the new engine can handle it
+        const S = 220;          // Size boundaries
+        const points = [];
+        
+        // Helper functions
+        function R(max) { return (Math.random() * 2 - 1) * max; }
+        function clamp(v) { return Math.max(0, Math.min(255, Math.floor(v))); }
+
+        // 1. Generate Points Map
+        for (let i = 0; i < numPoints; i++) {
+          let x, y, z;
+          const type = Math.random();
+
+          // Replicate the structural clusters from the screenshot
+          if (type < 0.20) {
+            // Structural Grid Lines
+            const axis = Math.floor(Math.random() * 3);
+            const gridSpacing = 30;
+            let a = Math.round(R(S) / gridSpacing) * gridSpacing;
+            let b = Math.round(R(S) / gridSpacing) * gridSpacing;
+            let c = R(S);
+            if(axis === 0) { x = c; y = a; z = b; }
+            if(axis === 1) { x = a; y = c; z = b; }
+            if(axis === 2) { x = a; y = b; z = c; }
+          } else if (type < 0.35) {
+            // Central Dense Blob (Whiteish / Cyan)
+            x = 20 + R(70); y = -30 + R(70); z = 40 + R(70);
+          } else if (type < 0.45) {
+            // Distinct Vertical Pillar (Bright Blue/Cyan)
+            x = 110 + R(15); y = R(S); z = 50 + R(15);
+          } else if (type < 0.55) {
+            // Top/Left Edge Cluster (Purple/Magenta)
+            x = -80 + R(70); y = -160 + R(40); z = -40 + R(70);
+          } else if (type < 0.65) {
+            // Lower/Left Wall Plane (Dark Red/Orange)
+            x = -170 + R(20); y = R(S * 0.8); z = R(S * 0.8);
+          } else {
+            // Uniform Background Noise
+            x = R(S); y = R(S); z = R(S);
+          }
+
+          // Calculate color based on position
+          let r = clamp( 130 - 120*(x/S) + 60*(y/S) - 30*(z/S) );
+          let g = clamp( 110 + 130*(x/S) + 50*(y/S) + 30*(z/S) );
+          let b = clamp( 140 - 130*(y/S) + 80*(z/S) );
+
+          // Add brightness variance
+          const brightnessNoise = 0.5 + Math.random() * 0.8;
+          r = clamp(r * brightnessNoise);
+          g = clamp(g * brightnessNoise);
+          let rawB = clamp(b * brightnessNoise);
+
+          // QUANTIZATION: Group similar colors to drastically reduce DOM elements
+          // We round colors to the nearest 24 to create color "buckets"
+          const step = 24;
+          const qr = Math.floor(r / step) * step;
+          const qg = Math.floor(g / step) * step;
+          const qb = Math.floor(rawB / step) * step;
+          
+          const colorKey = `rgba(${qr},${qg},${qb},0.8)`;
+          points.push({ x, y, z, colorKey });
+        }
+
+        // 2. Setup DOM Paths per Color Bucket
+        const paths = {};
+        const groups = {};
+
+        points.forEach(p => {
+          if (!groups[p.colorKey]) {
+            groups[p.colorKey] =[];
+            let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("fill", p.colorKey);
+            scene.appendChild(path);
+            paths[p.colorKey] = path;
+          }
+          groups[p.colorKey].push(p);
+        });
+
+        // 3. Software 3D Projection Engine
+        let rotX = 15 * Math.PI / 180;
+        let rotY = 0;
+        let rotZ = 5 * Math.PI / 180;
+        const focalLength = 800;
+        const cameraZ = 800;
+
+        let lastTime = 0;
+
+        function animate(time) {
+          // Calculate delta time to ensure smooth speed at 60hz, 120hz, or 144hz
+          let dt = time - lastTime;
+          lastTime = time;
+          if (dt > 100) dt = 16; // Fix huge jumps if user switches tabs
+
+          // Update rotation angles
+          rotY += 0.0004 * dt;
+          rotX += 0.00015 * dt;
+          rotZ += 0.0001 * dt;
+
+          const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+          const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+          const cosZ = Math.cos(rotZ), sinZ = Math.sin(rotZ);
+
+          // Iterate through every color bucket
+          for (const color in groups) {
+            let dString = "";
+            const pts = groups[color];
+            
+            for (let i = 0; i < pts.length; i++) {
+              const p = pts[i];
+
+              // Rotate Z
+              let x1 = p.x * cosZ - p.y * sinZ;
+              let y1 = p.y * cosZ + p.x * sinZ;
+              let z1 = p.z;
+              // Rotate X
+              let y2 = y1 * cosX - z1 * sinX;
+              let z2 = z1 * cosX + y1 * sinX;
+              let x2 = x1;
+              // Rotate Y
+              let x3 = x2 * cosY + z2 * sinY;
+              let z3 = z2 * cosY - x2 * sinY;
+              let y3 = y2;
+
+              // Perspective Projection
+              let zDist = z3 + cameraZ;
+              if (zDist < 10) zDist = 10; // Prevent behind-camera glitches
+              
+              let scale = focalLength / zDist;
+              let px = x3 * scale;
+              let py = y3 * scale;
+              
+              // Base size dynamically scales with perspective
+              let s = 1.8 * scale; 
+
+              // Append an optimized square to the SVG Path data string (M = move, h = horizontal line, v = vertical line)
+              dString += `M${px.toFixed(1)},${py.toFixed(1)} h${s.toFixed(1)} v${s.toFixed(1)} h-${s.toFixed(1)} Z `;
+            }
+            
+            // Batch update all points of this color in one single DOM operation
+            paths[color].setAttribute("d", dString);
+          }
+
+          // Request the next frame (Automatically binds to 120FPS if monitor allows)
+          requestAnimationFrame(animate);
+        }
+
+        // Start Loop
+        requestAnimationFrame(animate);
+      });
+    ]]>
+  </script>
+</svg>
